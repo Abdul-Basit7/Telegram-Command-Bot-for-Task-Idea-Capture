@@ -1,0 +1,496 @@
+{
+  "name": "Telegram Command Bot for Task Idea Capture",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -496,
+        -32
+      ],
+      "id": "27e9759d-ea46-4c63-b083-726fe70d5803",
+      "name": "Telegram Trigger",
+      "webhookId": "0b08ebb5-992e-4db6-b438-9cb846e21fce",
+      "credentials": {
+        "telegramApi": {
+          "id": "UnB7IbiM78HmGdYY",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        48,
+        192
+      ],
+      "id": "0494b8e0-2631-4f42-9d21-e4e6977712f1",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "EimQkEFi0rUWRsOc",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an intent classifier. Given a sentence, respond with just one word that tells the type:\n\nChoose from:\n- task\n- idea\n- note\n\nExamples:\n\"Clean the kitchen\" → task  \n\"AI tool for automating groceries\" → idea  \n\"Don’t forget mom’s birthday\" → note  \n\"Start writing article about dopamine detox\" → task  \n\"Make a journal entry about today's mood\" → note  \n\"Build a Telegram bot that logs ideas in Airtable\" → idea\n\nMessage: {{ $json.message.text }}\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        -48,
+        -32
+      ],
+      "id": "7bb566f2-b16f-4935-ba9f-53e02552a4e4",
+      "name": "Message Classifier"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a6603a63-1dd5-45e8-9f27-521a8a41acea",
+              "name": "message.text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -272,
+        -32
+      ],
+      "id": "26a66565-62fc-4e5b-bd61-4af99715cff0",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "appS3fGaveu9OL5w2",
+          "mode": "list",
+          "cachedResultName": "Records",
+          "cachedResultUrl": "https://airtable.com/appS3fGaveu9OL5w2"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblXc4Y9W2vq9S7HJ",
+          "mode": "list",
+          "cachedResultName": "Notes",
+          "cachedResultUrl": "https://airtable.com/appS3fGaveu9OL5w2/tblXc4Y9W2vq9S7HJ"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Message": "={{ $('Telegram Trigger').item.json.message.text }}",
+            "Classified as": "={{ $json.output }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Classified as",
+              "displayName": "Classified as",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Created",
+              "displayName": "Created",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        672,
+        -224
+      ],
+      "id": "1d2ae70a-8144-41a2-990f-9df287a8f7b4",
+      "name": "Create or update a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "JiV0u1dmp7cvD7Zq",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "basit0383@gmail.com",
+        "toEmail": "abdulbasitoctaloop@gmail.com",
+        "subject": "New note from Telegram",
+        "emailFormat": "text",
+        "text": "={{ $json.output }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        976,
+        160
+      ],
+      "id": "662c51a4-6755-47e4-aff1-6470a495fc4b",
+      "name": "Send email",
+      "webhookId": "2ed6f9e8-e596-4aa4-8422-36017f58d6f6",
+      "credentials": {
+        "smtp": {
+          "id": "mF2vVLHshRbCGz9k",
+          "name": "SMTP account 0383"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a helpful assistant in email writing. You will be given a note and you have to send an email letting the receiver know what note did he receive from telegram.Keep in mind you only have to write the body of the email. Sign off with Abdul. Below is the note send by telegram:\n\nNote: {{ $('Telegram Trigger').item.json.message.text }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        576,
+        160
+      ],
+      "id": "ea350358-c15f-4a70-97d9-c6e542c121e8",
+      "name": "Email Writer"
+    },
+    {
+      "parameters": {
+        "pageId": {
+          "__rl": true,
+          "value": "https://www.notion.so/Task-242fa2ce8ae480dbb694deb2edf207d6?source=copy_link",
+          "mode": "url"
+        },
+        "title": "Task",
+        "blockUi": {
+          "blockValues": [
+            {
+              "type": "to_do",
+              "textContent": "={{ $('Telegram Trigger').item.json.message.text }}"
+            },
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        -32
+      ],
+      "id": "b4409de6-22a2-4e32-860f-3c86c9ef9a13",
+      "name": "Create a page",
+      "credentials": {
+        "notionApi": {
+          "id": "NemCx3c7mPwGLp2w",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "idea",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "7d64999d-cafa-4b1e-929f-4bc44a125fd1"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        352,
+        -224
+      ],
+      "id": "62ac4d74-934a-4721-b0e1-db840cab0965",
+      "name": "Route to Airtable"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "task",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "fceed41c-2a4e-4679-8e7c-37579027d09f"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        352,
+        -32
+      ],
+      "id": "255d9bdd-ddfa-4109-8fd6-eba5aa76da1c",
+      "name": "Route to Email"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "note",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "6d735468-96d7-4f54-8935-2b145f74e110"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        352,
+        160
+      ],
+      "id": "21373ef9-2cdb-4c40-a4cf-8d470c56c910",
+      "name": "Route to Notion"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Message Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Email Writer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message Classifier": {
+      "main": [
+        [
+          {
+            "node": "Route to Airtable",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Route to Notion",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Route to Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Message Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create or update a record": {
+      "main": [
+        []
+      ]
+    },
+    "Email Writer": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route to Airtable": {
+      "main": [
+        [
+          {
+            "node": "Create or update a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route to Email": {
+      "main": [
+        [
+          {
+            "node": "Create a page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route to Notion": {
+      "main": [
+        [
+          {
+            "node": "Email Writer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a5bc6a04-1a46-437b-8f87-1691aaf55bfa",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0c2c0cf8b217727cb995df939f5b2aea6a545eccb1db85cae7d9c807d91391e3"
+  },
+  "id": "wDobf8twVnikjrd9",
+  "tags": []
+}
