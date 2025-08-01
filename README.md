@@ -1,3 +1,7 @@
+
+<img width="1085" height="396" alt="n8n automation n8n agent workflow automation Make com AI Automation1" src="https://github.com/user-attachments/assets/bbdb3310-fbe2-4bd6-8db1-ea3b948cc9f7" />
+
+
 # Telegram-Command-Bot-for-Task-Idea-Capture
 
 You just had a brilliant thought… and 2 minutes later, it vanished.
