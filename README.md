@@ -1,46 +1,53 @@
 
-<img width="1085" height="396" alt="n8n automation n8n agent workflow automation Make com AI Automation1" src="https://github.com/user-attachments/assets/bbdb3310-fbe2-4bd6-8db1-ea3b948cc9f7" />
+![n8n integrationworkflow automationapi integration ai agent 1](https://github.com/user-attachments/assets/c572ed74-8ad0-47ad-b78e-64c5302be884)
 
 
-# Telegram-Command-Bot-for-Task-Idea-Capture
+# 📌 Project: Telegram Intent Bot – AI-Powered Task & Idea Capture
 
-You just had a brilliant thought… and 2 minutes later, it vanished.
-You told yourself you’d remember.
-But then a Slack ping came in.
-A client called.
-You opened Instagram.
-Someone asked, “Hey, can you quick check this?”
+## Description  
+The Telegram Intent Bot is an AI-powered assistant built on **n8n** that captures your thoughts, tasks, and ideas the moment they appear — before distractions wipe them away.  
+It listens to any message you send (no commands required), understands its type, and routes it automatically to the right destination — so nothing important gets lost.
 
-By the time you came back to your thought — it was gone.
+---
 
-This isn’t just forgetfulness — it’s digital mental erosion.
-Your day is an endless loop of micro-interruptions:
+## 🚀 Features
 
-Telegram group chats
+- **Instant Idea Capture**  
+  Send any message to your Telegram bot — no formatting or commands needed.
 
-Calendar pings
+- **AI-Powered Intent Detection**  
+  Uses **Groq** or **OpenAI** to classify messages as:
+  - Task
+  - Idea
+  - Note
 
-Browser tab overload
+- **Automated Routing**  
+  - Sends tasks to **Notion**  
+  - Stores ideas in **Airtable**  
+  - Emails notes directly to your inbox with friendly, auto-written copy
 
-“Quick” YouTube breaks that turn into 45 minutes
+- **Real-Time Processing**  
+  Everything happens instantly — no manual sorting, no forgetting.
 
-And amidst the chaos, your best ideas, important to-dos, and personal reminders dissolve — lost to the noise.
-Worse: when you finally sit down at night, you can’t even remember what mattered.
+---
 
-Meet the Telegram Intent Bot — an AI-powered capture assistant built on n8n, designed to catch thoughts the moment they appear — before the world interrupts.
+## 🛠️ Tech Stack & Integrations
 
-Here’s how it works:
+- **n8n** – Workflow automation platform  
+- **Telegram Bot API** – Message capture  
+- **Groq / OpenAI API** – AI-powered message classification  
+- **Notion API** – Task storage  
+- **Airtable API** – Idea management  
+- **SMTP / Email API** – Note delivery to inbox  
 
-🔁 You send any message to your Telegram bot (no slashes, no commands)
+---
 
-🧠 It uses Groq/OpenAI to understand what you're saying: is it a task, idea, or note?
+## 📂 How It Works
 
-✅ It routes the message automatically:
-
-Sends tasks to Notion
-
-Stores ideas in Airtable
-
-Emails notes to your inbox — auto-written with friendly copy
-
-All in real-time. Fully automated. No manual sorting. No forgetting.
+1. **Send a message** to your Telegram bot.  
+2. **AI analyzes** and classifies it as a task, idea, or note.  
+3. **Workflow routes** the message to the correct app:
+   - Tasks → Notion
+   - Ideas → Airtable
+   - Notes → Email inbox  
+4. **Done!** No commands, no manual sorting, no missed ideas.
